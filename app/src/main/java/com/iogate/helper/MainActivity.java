@@ -1,9 +1,11 @@
 package com.iogate.helper;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,8 +19,14 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    static MainActivity g_ma = null;
 
     IogateHelper mIoGateHelper;
+    Handler mUiHandler;
+
+    static MainActivity getMainUi() {
+        return g_ma;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +34,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        g_ma = this;
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -45,8 +54,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mUiHandler = new Handler();
+
         mIoGateHelper = new IogateHelper(this);
-        new Handler().postDelayed(mIoGateHelper, 100);
+        mIoGateHelper.initializeResolveListener();
+        mIoGateHelper.mHelperThr = new Thread(mIoGateHelper);
+        mIoGateHelper.mHelperThr.start();
     }
 
     @Override
@@ -87,13 +100,16 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        Log.d(IogateHelper.TAG, "Selected Item :" + item);
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.pickup_new_device) {
+            // Pickup new device
+            mIoGateHelper.discoverServices();
 
         } else if (id == R.id.nav_share) {
 
@@ -105,4 +121,10 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public Handler getUiHandler() {
+        return mUiHandler;
+    }
+
+
 }
