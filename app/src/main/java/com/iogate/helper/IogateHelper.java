@@ -28,13 +28,18 @@ public class IogateHelper implements Runnable {
     @Override
     public void run() {
         Log.d(TAG, "IOGate Starting...");
-        //initializeDiscoveryListener();
-        //mNsdManager.discoverServices(
-        //        SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
 
         try {
-            Thread.sleep(1000);
-            showToast("Helper Started");
+            // Find IOGate device
+            discoverServices();
+            Thread.sleep(500);
+            if (null != mIoGate) {
+                MainActivity.getMainUi().updateNavHeaderSubtitle("Connected: " + mIoGate);
+                showToast("IOGate Connected");
+            } else {
+                showToast("IOGate NOT FOUND !");
+            }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -114,7 +119,7 @@ public class IogateHelper implements Runnable {
                 if (serviceInfo.getServiceName().equals(mServiceName)) {
 //                    Log.d(TAG, "Same IP.");
                     mIoGate = new IogateDev(serviceInfo.getHost(), serviceInfo.getPort());
-                    showToast("Found IOGate at: " + mIoGate);
+                    //showToast("Found IOGate at: " + mIoGate);
                     stopDiscovery();
                     return;
                 }

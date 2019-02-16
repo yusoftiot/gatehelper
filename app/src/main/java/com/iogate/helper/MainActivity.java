@@ -1,6 +1,7 @@
 package com.iogate.helper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -103,8 +106,11 @@ public class MainActivity extends AppCompatActivity
         Log.d(IogateHelper.TAG, "Selected Item :" + item);
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.nav_cameras) {
+            // Cameras Settings
+            //Intent intent = new Intent(MainActivity.this, CamerasActivity.class);
+            //myIntent.putExtra("key", value); //Optional parameters
+            //MainActivity.this.startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.pickup_new_device) {
@@ -126,5 +132,13 @@ public class MainActivity extends AppCompatActivity
         return mUiHandler;
     }
 
-
+    public void updateNavHeaderSubtitle(final String in_newText) {
+        MainActivity.getMainUi().getUiHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                TextView tv1 = (TextView)findViewById(R.id.textView);
+                tv1.setText(in_newText);
+            }
+        });
+    }
 }
